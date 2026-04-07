@@ -191,9 +191,9 @@ class PowerupFactory(object):
 
 
 def getDefaultPowerupDistribution():
-    # pure build: no boxing gloves, keep other stock powerups
     return (('tripleBombs',3),
             ('iceBombs',3),
+            ('punch',3),
             ('impactBombs',3),
             ('landMines',2),
             ('stickyBombs',3),

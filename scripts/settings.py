@@ -13,8 +13,8 @@ enableVerification = False
 enableStats = True
 
 # Unified bootstrap toggles (loaded by mod_bootstrap.py)
-bootstrap_spaz = True
-bootstrap_powerup = True
+bootstrap_spaz = False
+bootstrap_powerup = False
 bootstrap_bomb = False
 bootstrap_kill_lightning = True
 bootstrap_impact_no_friendlyfire = True
