@@ -11,7 +11,7 @@ nameP = False
 #
 #for default gameplay
 #
-defaultBoxingGloves = True
+defaultBoxingGloves = False
 #
 defaultShields = False
 #
