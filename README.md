@@ -96,6 +96,17 @@
 - `/disco`：迪斯科灯效
 - `/id <index>`：查看目标玩家 profile 列表
 
+
+## CheatCmd 权限分级（按 command_registry）
+
+- `owner`：`/admin` `/member` `/quit`
+- `admin`：`/kick` `/getlost` `/vip` `/maxPlayers` `/end` `/tint` `/sm` `/cameraMode` `/id` `/icy` `/floorReflection` `/ac` `/reflections` `/fly` `/shield` `/remove` `/gm` `/punch` `/gift` `/shatter` `/sleep` `/cmr`
+- `vip`：`/kill`
+- `member`：`/list` `/freeze` `/thaw` `/heal` `/curse`
+- `any`：`/help` `/me` `/top` `/ego` `/ooh` `/playSound` `/nv` `/lm444` `/iceOff` `/reset` `/disco` `/contact` `/tag` `/box` `/mine` `/headless` `/celebrate` `/hug` `/spaz` `/inv`
+
+> 说明：实际执行中，`owners/admins/vips/members` 继承关系由 `cheatCmd.py` 内 `checkRole` 决定（高权限可用低权限命令）。
+
 ## 使用建议
 
 - 想要稳定公开服：使用 `main`
