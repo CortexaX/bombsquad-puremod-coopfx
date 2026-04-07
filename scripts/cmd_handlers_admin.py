@@ -5,26 +5,86 @@ import bsInternal
 
 
 def _find_player_by_client_id(client_id):
-    activity = bsInternal._getForegroundHostActivity()
-    if activity is None:
-        return None
-    for p in activity.players:
-        try:
-            if p.getInputDevice().getClientID() == client_id:
-                return p
-        except Exception:
-            pass
+    # Prefer session-level lookup: works in lobby/party and in-game.
+    try:
+        session = bsInternal._getForegroundHostSession()
+        if session is not None:
+            for p in session.players:
+                try:
+                    if p.getInputDevice().getClientID() == client_id:
+                        return p
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
+    # Fallback to activity-level lookup.
+    try:
+        activity = bsInternal._getForegroundHostActivity()
+        if activity is not None:
+            for p in activity.players:
+                try:
+                    if p.getInputDevice().getClientID() == client_id:
+                        return p
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
     return None
 
 
 def _get_roster_display_by_client_id(client_id):
     for client in bsInternal._getGameRoster():
         try:
-            if client.get('clientID') == client_id:
+            if int(client.get('clientID')) == int(client_id):
                 return client.get('displayString', '')
         except Exception:
             pass
     return ''
+
+
+def _get_account_id_by_client_id(client_id):
+    # First try session players.
+    try:
+        session = bsInternal._getForegroundHostSession()
+        if session is not None:
+            for p in session.players:
+                try:
+                    if int(p.getInputDevice().getClientID()) == int(client_id):
+                        return p.get_account_id()
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
+    # Then try activity players.
+    try:
+        activity = bsInternal._getForegroundHostActivity()
+        if activity is not None:
+            for p in activity.players:
+                try:
+                    if int(p.getInputDevice().getClientID()) == int(client_id):
+                        return p.get_account_id()
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
+    # Finally try roster metadata (field names vary by build).
+    try:
+        for client in bsInternal._getGameRoster():
+            try:
+                if int(client.get('clientID')) == int(client_id):
+                    aid = client.get('accountID') or client.get('accountId') or client.get('account_id')
+                    if aid:
+                        return aid
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    return None
 
 
 def _save_role_list(mid_storage, MID, key, values):
@@ -42,12 +102,12 @@ def register(handlers, ctx):
     def _mutate_role_list(clientID, args, key):
         cid = int(args[0])
         action = args[1].lower()
-        player = _find_player_by_client_id(cid)
-        if player is None:
-            bs.screenMessage('PLAYER NOT FOUND', color=(1, 0, 0), clients=[clientID], transient=True)
+
+        aid = _get_account_id_by_client_id(cid)
+        if not aid:
+            bs.screenMessage('PLAYER NOT FOUND (check /list clientID)', color=(1, 0, 0), clients=[clientID], transient=True)
             return True
 
-        aid = player.get_account_id()
         current = list(getattr(MID, key))
 
         if action == 'add':
