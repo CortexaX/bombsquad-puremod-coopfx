@@ -976,22 +976,8 @@ class Spaz(bs.Actor):
                         bs.Timer(gPowerupWearOffTime,
                                  bs.WeakCall(self._bombWearOff))
             elif msg.powerupType == 'punch':
-                self._hasBoxingGloves = True
-                tex = bs.Powerup.getFactory().texPunch
-                self._flashBillboard(tex)
-                self.equipBoxingGloves()
-                if self.powerupsExpire:
-                    self.node.boxingGlovesFlashing = 0
-                    self.node.miniBillboard3Texture = tex
-                    t = bs.getGameTime()
-                    self.node.miniBillboard3StartTime = t
-                    self.node.miniBillboard3EndTime = t+gPowerupWearOffTime
-                    self._boxingGlovesWearOffFlashTimer = \
-                        bs.Timer(gPowerupWearOffTime-2000,
-                                 bs.WeakCall(self._glovesWearOffFlash))
-                    self._boxingGlovesWearOffTimer = \
-                        bs.Timer(gPowerupWearOffTime,
-                                 bs.WeakCall(self._glovesWearOff))
+                # pure build: disable boxing gloves powerup effect
+                pass
             elif msg.powerupType == 'shield':
                 factory = self.getFactory()
                 # let's allow powerup-equipped shields to lose hp over time
